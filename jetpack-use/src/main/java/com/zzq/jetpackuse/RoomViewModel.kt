@@ -1,8 +1,21 @@
 package com.zzq.jetpackuse
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.zzq.jetpackuse.db.entity.StartupPO
+import com.zzq.jetpackuse.repository.DbStartupRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RoomViewModel : ViewModel() {
+@HiltViewModel
+class RoomViewModel @Inject constructor(
+    private val dbStartupRepository: DbStartupRepository
+) : ViewModel() {
 
-    //TODO 增加每次启动应用时的表和记录
+    fun createStartupRecord() {
+        viewModelScope.launch {
+            dbStartupRepository.addItem(StartupPO())
+        }
+    }
 }
