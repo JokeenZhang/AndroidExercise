@@ -5,7 +5,6 @@ import com.zzq.jetpackuse.db.entity.StartupPO
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class DbStartupRepository @Inject constructor(private val startupDao: StartupDao) {
 
     fun getStartups() = startupDao.queryAllStartup()
