@@ -2,6 +2,7 @@ package com.zzq.jetpackuse.di
 
 import android.content.Context
 import com.zzq.jetpackuse.app.JetpackDatabase
+import com.zzq.jetpackuse.db.dao.AppExceptionDao
 import com.zzq.jetpackuse.db.dao.StartupDao
 import dagger.Module
 import dagger.Provides
@@ -27,5 +28,11 @@ class DatabaseModule {
     @Provides
     fun provideStartupDao(appDatabase: JetpackDatabase): StartupDao {
         return appDatabase.startupDao
+    }
+
+    @Singleton
+    @Provides
+    fun provideAppExceptionDao(appDatabase: JetpackDatabase):AppExceptionDao {
+        return appDatabase.appExceptionDao
     }
 }

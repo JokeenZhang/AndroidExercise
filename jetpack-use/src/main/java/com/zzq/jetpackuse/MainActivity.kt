@@ -6,13 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,11 +18,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.zzq.jetpackuse.bean.BottomNavItem
 import com.zzq.jetpackuse.ui.theme.AndroidExerciseTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val roomViewModel:RoomViewModel by viewModels()
+    private val roomViewModel: RoomViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        roomViewModel.createStartupRecord()
+        roomViewModel.prepareDbDataInStartup()
     }
 }
 
@@ -52,6 +52,9 @@ fun MainPage() {
         BottomNavItem("列表", Icons.Filled.List),
         BottomNavItem("设置", Icons.Filled.Settings),
     )
+
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = "主页") }, navigationIcon = {
@@ -71,13 +74,43 @@ fun MainPage() {
                 }
             }
         },
+        drawerContent = {
+            TopAppBar(
+                title = { Text(text = "侧边栏Top") },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            doSuspendTask(coroutineScope) { scaffoldState.drawerState.close() }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Phone,
+                            contentDescription = "Open Navigation Drawer"
+                        )
+                    }
+
+                }
+            )
+            Column(modifier = Modifier.fillMaxSize()) {
+                Button(onClick = {
+                    doSuspendTask(coroutineScope) { scaffoldState.drawerState.close() }
+                }) {
+                    Text(text = "点击后关闭Drawer")
+                }
+            }
+        },
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(text = items[selectedItem].name)
         }
     }
 
+}
 
+private fun doSuspendTask(coroutineScope: CoroutineScope, task: suspend () -> Unit) {
+    coroutineScope.launch {
+        task.invoke()
+    }
 }
 
 @Composable

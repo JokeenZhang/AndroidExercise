@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace 'com.zzq.jetpackuse'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.zzq.jetpackuse"
